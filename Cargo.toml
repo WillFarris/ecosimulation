@@ -1,0 +1,8 @@
+[package]
+name = "ecosimulation"
+version = "0.1.0"
+authors = ["Will Farris <wfarris@pdx.edu>",
+           "Maggie Haddon <mahadd29@pdx.edu>"]
+edition = "2018"
+
+[dependencies]
