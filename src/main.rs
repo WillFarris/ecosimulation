@@ -66,7 +66,7 @@ impl EventHandler for GameState {
 }
 
 fn main() {
-    let (mut ctx, mut event_loop) = ContextBuilder::new("ecosim", "Will Farris, Maggie Haddon")
+    let (mut ctx, mut event_loop) = ContextBuilder::new("Ecosystem Simulation", "Will Farris, Maggie Haddon")
         .window_setup(ggez::conf::WindowSetup::default().title("Ecosystem Simulation"))
         .build()
         .expect("Could not create ggez context!");
