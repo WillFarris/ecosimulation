@@ -8,7 +8,6 @@ use ggez::GameResult;
 mod critters;
 mod math;
 use critters::critters::*;
-use math::math::distance;
 
 struct GameState {
     population: Vec<Prey>,
@@ -35,14 +34,11 @@ impl GameState {
 impl EventHandler for GameState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
         for i in &mut self.population {
-            for f in &self.food {
-                if distance(&i.position, &f.position) < i.size + f.size {
-                    i.eat(f);
-                }
-            }
+            i.seek_food(&mut self.food);
             i.update();
         }
         self.population.retain(|x| !x.is_dead);
+        self.food.retain(|x| !x.consumed);
         Ok(())
     }
 
@@ -56,8 +52,10 @@ impl EventHandler for GameState {
         }
 
         for p in &self.population {
-            let mesh = Mesh::new_circle(ctx, graphics::DrawMode::fill(), p.position, p.size, 0.1, p.color)?;
-            draw(ctx, &mesh, DrawParam::default())?;
+            let eyesight_mesh = Mesh::new_circle(ctx, graphics::DrawMode::fill(), p.position, p.eyesight, 0.1, Color::from_rgba(255, 0,0, 50))?;
+            let body_mesh = Mesh::new_circle(ctx, graphics::DrawMode::fill(), p.position, p.size, 0.1, p.color)?;
+            draw(ctx, &eyesight_mesh, DrawParam::default())?;
+            draw(ctx, &body_mesh, DrawParam::default())?;
         }
 
         present(ctx)?;

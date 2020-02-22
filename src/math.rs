@@ -6,4 +6,10 @@ pub mod math {
         let dy = p2.y - p1.y;
         (dx * dx + dy * dy).sqrt()
     }
+
+    pub fn anglebetween(from: &Point2<f32>, to: &Point2<f32>) -> f32 {
+        let dx = to.x - from.x;
+        let dy = to.y - from.y;
+        dy.atan2(dx)
+    }
 }
