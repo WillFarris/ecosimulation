@@ -12,13 +12,13 @@ pub mod critters {
         direction: Point2<f32>,
 
         // Genetic traits
-        pub size: f32,      //larger creatures have higher hunger
-        speed: f32,
-        pub eyesight: f32,
+        pub size: f32,      //
+        speed: f32,         // faster creatures consume energy more quickly
+        pub eyesight: f32,  // creatures with better eyesight can sense food further away
 
         // "Lifetime" traits
-        hunger: f32,
-        pub is_dead: bool,
+        hunger: f32,        //decreases with movement, creature dies if it starves to death
+        pub is_dead: bool,  //dead flag, all dead creatures are removed each update() tick
     }
 
     impl Prey {
@@ -31,7 +31,7 @@ pub mod critters {
                 direction: Point2 {x: angle.cos(), y: angle.sin()},
                 color: Color::from_rgb(200, 50, 90),
 
-                speed: rng.gen_range(1.0, 2.0),
+                speed: rng.gen_range(0.1, 1.0),
                 size: 10.0,
                 eyesight: 50.0,
 
@@ -57,30 +57,33 @@ pub mod critters {
             }
         }
 
-        pub fn seek_food(&mut self, food: &Vec<Food>) {
-            let mut nearest_food: &Food = &food[0];
-            let mut nearest_distance = distance(&self.position, &nearest_food.position);
-            for f in food {
+        pub fn seek_food(&mut self, food_vec: &mut Vec<Food>) {
+            if food_vec.is_empty() {
+                return;
+            }
+
+            let mut nearest_food = None;
+            let mut nearest_distance: f32 = std::f32::INFINITY;
+            for f in food_vec {
                 let current_distance = distance(&self.position, &f.position);
                 if current_distance < nearest_distance {
-                    nearest_food = &f;
+                    nearest_food = Some(f);
                     nearest_distance = current_distance;
                 }
             }
 
+            let target_food = nearest_food.unwrap();
+
             if nearest_distance < self.eyesight {
-                let angle = anglebetween(&self.position, &nearest_food.position);
+                let angle = anglebetween(&self.position, &target_food.position);
                 self.direction.x = angle.cos();
                 self.direction.y = angle.sin();
             }
 
             if nearest_distance < self.size {
-                self.eat(&mut nearest_food);
+                self.hunger +=  10.0 *target_food.size;
+                target_food.consumed = true;
             }
-        }
-
-        pub fn eat(&mut self, found_food: &Food) {
-            self.hunger += found_food.size;
         }
     }
 
