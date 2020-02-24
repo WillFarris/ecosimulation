@@ -14,9 +14,11 @@ pub mod critters {
         pub direction: Point2<f32>,
 
         // Genetic traits
-        pub size: f32,      //
+        pub size: f32,      // larger creatures can go longer without food
         speed: f32,         // faster creatures consume energy more quickly
         pub eyesight: f32,  // creatures with better eyesight can sense food further away
+
+        pub max_hunger: f32, // depends on size
 
         // "Lifetime" traits
         pub hunger: f32,        //decreases with movement, creature dies if it starves to death
@@ -37,6 +39,7 @@ pub mod critters {
 
                 speed: rng.gen_range(0.1, 0.5),
                 size: size,
+                max_hunger: size * 100.0,
                 eyesight: rng.gen_range(size + 10.0, size + 50.0),
 
                 hunger: MAX_HUNGER,
@@ -94,6 +97,27 @@ pub mod critters {
                     self.hunger = MAX_HUNGER;
                 }
                 target_food.consumed = true;
+            }
+        }
+
+        pub fn seek_mate(&mut self, target: &Prey) {
+            let angle = anglebetween(&self.position, &target.position);
+            self.direction.x = angle.cos();
+            self.direction.y = angle.sin();
+        }
+
+        pub fn mate(&self, _mate_with: &Prey) -> Prey {
+            Prey {
+                position: self.position,
+                color: Color::from_rgb(0, 0, 255),
+                direction: Point2 { x: 0.0, y: 0.0 },
+                size: 10.0,
+                speed: 0.5,
+                eyesight: 20.0,
+                max_hunger: 500.0,
+                hunger: 500.0,
+                is_dead: false,
+                wants_mate: false
             }
         }
     }
