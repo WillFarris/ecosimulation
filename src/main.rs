@@ -1,13 +1,14 @@
 use ggez::event::EventHandler;
 use ggez::graphics;
 use ggez::ContextBuilder;
-use ggez::graphics::{draw, Color, DrawParam, clear, present, Mesh};
+use ggez::graphics::{draw, Color, DrawParam, clear, present, Mesh, Rect};
 use ggez::event;
 use ggez::Context;
 use ggez::GameResult;
 mod critters;
 mod math;
 use critters::critters::*;
+use crate::math::math::{distance, anglebetween};
 
 struct GameState {
     population: Vec<Prey>,
@@ -53,9 +54,13 @@ impl EventHandler for GameState {
 
         for p in &self.population {
             let eyesight_mesh = Mesh::new_circle(ctx, graphics::DrawMode::fill(), p.position, p.eyesight, 0.1, Color::from_rgba(255, 0,0, 50))?;
-            let body_mesh = Mesh::new_circle(ctx, graphics::DrawMode::fill(), p.position, p.size, 0.1, p.color)?;
+            let body_mesh =     Mesh::new_circle(ctx, graphics::DrawMode::fill(), p.position, p.size, 0.1, p.color)?;
+            let hunger_bg =     Mesh::new_rectangle(ctx, graphics::DrawMode::fill(), Rect {x: p.position.x - (3.0 * p.size), y: p.position.y - (3.0 * p.size), w: (6.0 * p.size), h: 10.0}, Color::from_rgb(100, 100, 100))?;
+            let hunger_bar =    Mesh::new_rectangle(ctx, graphics::DrawMode::fill(), Rect {x: p.position.x - (3.0 * p.size), y: p.position.y - (3.0 * p.size), w: (6.0 * p.size) * (p.hunger / MAX_HUNGER), h: 10.0}, Color::from_rgb(255, 0, 0))?;
             draw(ctx, &eyesight_mesh, DrawParam::default())?;
-            draw(ctx, &body_mesh, DrawParam::default())?;
+            draw(ctx, &body_mesh,     DrawParam::default())?;
+            draw(ctx, &hunger_bg,    DrawParam::default())?;
+            draw(ctx, &hunger_bar,    DrawParam::default())?;
         }
 
         present(ctx)?;
