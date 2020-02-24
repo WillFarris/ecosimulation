@@ -110,16 +110,20 @@ pub mod critters {
         }
 
         pub fn seek_mate(&mut self, target: &Prey) {
-            //let target: &Prey;
             if !self.wants_mate {
                 return;
             }
+            let dist = distance(&self.position, &target.position);
+
+            //if critters can see each other, go toward mate 
+            if dist < self.eyesight || dist < target.eyesight {
             let angle = anglebetween(&self.position, &target.position);
             self.direction.x = angle.cos();
             self.direction.y = angle.sin();
-
-            let dist = distance(&self.position, &target.position);
-            if dist < self.eyesight {
+            }
+            
+            //if critters cross, mate
+            if dist < self.size {
                 self.mate(target);
             }
         }
