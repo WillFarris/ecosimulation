@@ -50,7 +50,7 @@ pub mod critters {
 
                 hunger: MAX_HUNGER,
                 is_dead: false,
-                wants_mate: false,
+                wants_mate: true,
             }
         }
 
@@ -66,13 +66,6 @@ pub mod critters {
                 self.position.y += self.direction.y * self.speed;
 
                 self.hunger -= self.speed;
-              /*
-                if self.hunger > MAX_HUNGER * 0.75 {
-                    self.wants_mate = true;
-                }
-                */
-            //always horny for testing
-            self.wants_mate = true;
             } else {
                 self.is_dead = true;
             }
@@ -110,43 +103,12 @@ pub mod critters {
             }
         }
 
-        pub fn seek_mate(&mut self, target: &Prey, offspring: &mut Vec<Prey>) {
-            if !self.wants_mate {
-                return;
-            }
-            let dist = distance(&self.position, &target.position);
-
-            //if critters can see each other, go toward mate 
-            if dist < self.eyesight || dist < target.eyesight {
-            let angle = anglebetween(&self.position, &target.position);
+        pub fn look_at(&mut self, angle: f32) {
             self.direction.x = angle.cos();
             self.direction.y = angle.sin();
-            }
-
-            //if critters cross, mate
-            if dist < self.size {
-                offspring.push(self.mate(target));
-                
-            }
         }
 
-        pub fn mate(&mut self, _mate_with: &Prey) -> Prey {
-            self.wants_mate = false;
-            // _mate_with.wants_mate = false;  //borrow checker doesn't like changing this critter
-            Prey {
-                position: self.position,
-                color: Color::from_rgb(0, 0, 255),
-                direction: Point2 { x: 0.0, y: 0.0 },
-                size: 10.0,
-                speed: 0.5,
-                eyesight: 20.0,
-                max_hunger: 500.0,
-                hunger: 500.0,
-                is_dead: false,
-                wants_mate: false,
-            }
-        }
-
+        /*
         //based on seek_food
         //has some 162 style debugging print statements.  need to clean up
         pub fn mate_prey(&mut self, population: &Vec<Prey>, offspring: &mut Vec<Prey>) {
@@ -168,6 +130,21 @@ pub mod critters {
                     self.seek_mate(&partner.unwrap(), offspring);
                 }
             }
+        }*/
+    }
+
+    pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
+        Prey {
+            position: a.position,
+            color: Color::from_rgb(0, 0, 255),
+            direction: Point2 { x: 1.0, y: 0.0 },
+            size: a.size,
+            speed: b.speed,
+            eyesight: 20.0,
+            max_hunger: 500.0,
+            hunger: 500.0,
+            is_dead: false,
+            wants_mate: false,
         }
     }
 

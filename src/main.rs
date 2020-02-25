@@ -7,12 +7,11 @@ use ggez::ContextBuilder;
 use ggez::GameResult;
 mod critters;
 mod math;
-use crate::math::math::distance;
+use crate::math::math::{distance, anglebetween};
 use critters::critters::*;
 
 struct GameState {
     population: Vec<Prey>,
-    new_children: Vec<Prey>,
     food: Vec<Food>,
 }
 
@@ -20,15 +19,14 @@ impl GameState {
     pub fn new(_ctx: &mut Context) -> Self {
         let mut population = Vec::new();
         let mut food = Vec::new();
-        for _i in 0..5 {
+        for _i in 0..10 {
             population.push(Prey::new());
         }
-        for _i in 0..20 {
+        for _i in 0..30 {
             food.push(Food::new());
         }
         GameState {
             population,
-            new_children: vec![],
             food,
         }
     }
@@ -36,14 +34,24 @@ impl GameState {
 
 impl EventHandler for GameState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
-        let mates = &self.population;
-        for i in &mut self.population {
-            i.seek_food(&mut self.food);
-            i.update();
-            i.mate_prey(mates, &mut self.new_children);
-            //i.mate_prey(&mut self.new_children); does not work because new children is empty.  fn wants population
+        for i in 0..self.population.len() {
+            for j in 0..self.population.len() {
+                if i != j && self.population[i].wants_mate && self.population[j].wants_mate {
+                    let dist = distance(&self.population[i].position, &self.population[j].position);
+                    if dist < self.population[i].size + self.population[j].size {
+                        self.population.push(mate_prey(&self.population[i], &self.population[j]));
+                        self.population[i].wants_mate = false;
+                        self.population[j].wants_mate = false;
+                    } else if dist < self.population[i].eyesight + self.population[j].eyesight {
+                        let to_j = anglebetween(&self.population[i].position, &self.population[j].position);
+                        self.population[i].look_at(to_j);
+                        self.population[j].look_at(to_j - 3.141592);
+                    }
+                }
+            }
+            self.population[i].seek_food(&mut self.food);
+            self.population[i].update();
         }
-        self.population.append(&mut self.new_children);
         self.population.retain(|x| !x.is_dead);
         self.food.retain(|x| !x.consumed);
         Ok(())
