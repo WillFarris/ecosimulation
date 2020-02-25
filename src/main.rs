@@ -36,10 +36,12 @@ impl GameState {
 
 impl EventHandler for GameState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+        let mates = &self.population;
         for i in &mut self.population {
             i.seek_food(&mut self.food);
             i.update();
-            i.mate_prey(&mut self.new_children);
+            i.mate_prey(mates, &mut self.new_children);
+            //i.mate_prey(&mut self.new_children); does not work because new children is empty.  fn wants population
         }
         self.population.append(&mut self.new_children);
         self.population.retain(|x| !x.is_dead);

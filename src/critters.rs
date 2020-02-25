@@ -66,12 +66,13 @@ pub mod critters {
                 self.position.y += self.direction.y * self.speed;
 
                 self.hunger -= self.speed;
+              /*
                 if self.hunger > MAX_HUNGER * 0.75 {
                     self.wants_mate = true;
                 }
-
+                */
             //always horny for testing
-            //self.wants_mate = true;
+            self.wants_mate = true;
             } else {
                 self.is_dead = true;
             }
@@ -109,7 +110,7 @@ pub mod critters {
             }
         }
 
-        pub fn seek_mate(&mut self, target: &Prey) {
+        pub fn seek_mate(&mut self, target: &Prey, offspring: &mut Vec<Prey>) {
             if !self.wants_mate {
                 return;
             }
@@ -121,16 +122,17 @@ pub mod critters {
             self.direction.x = angle.cos();
             self.direction.y = angle.sin();
             }
-            
+
             //if critters cross, mate
             if dist < self.size {
-                self.mate(target);
+                offspring.push(self.mate(target));
+                
             }
         }
 
         pub fn mate(&mut self, _mate_with: &Prey) -> Prey {
             self.wants_mate = false;
-            // _mate_with.wants_mate = false;
+            // _mate_with.wants_mate = false;  //borrow checker doesn't like changing this critter
             Prey {
                 position: self.position,
                 color: Color::from_rgb(0, 0, 255),
@@ -146,20 +148,24 @@ pub mod critters {
         }
 
         //based on seek_food
-        pub fn mate_prey(&mut self, population: &mut Vec<Prey>) {
+        //has some 162 style debugging print statements.  need to clean up
+        pub fn mate_prey(&mut self, population: &Vec<Prey>, offspring: &mut Vec<Prey>) {
             if self.wants_mate {
                 let mut partner = None;
-                let mut nearest_distance: f32 = std::f32::INFINITY;
-                let pop = population.clone();
-                for p in pop {
-                    let current_distance = distance(&self.position, &p.position) - p.size;
-                    if current_distance < nearest_distance && current_distance != 0.0 {
+                let mut nearest_distance: f32 = std::f32::MAX;
+                //let pop = population.clone();
+                for p in population {
+                    println!("in the for loop!");
+                    let current_distance = distance(&self.position, &p.position);// - p.size;
+                    if (current_distance < nearest_distance) && (current_distance != 0.0) {
+                        println!("found a mate!");
                         partner = Some(p);
                         nearest_distance = current_distance;
                     }
                 }
+                println!("{:?}", partner);
                 if partner != None { //need to fix: never enters
-                    self.seek_mate(&partner.unwrap());
+                    self.seek_mate(&partner.unwrap(), offspring);
                 }
             }
         }
