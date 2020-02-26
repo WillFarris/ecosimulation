@@ -54,6 +54,12 @@ impl EventHandler for GameState {
         }
         self.population.retain(|x| !x.is_dead);
         self.food.retain(|x| !x.consumed);
+
+        if self.food.len() < 20{
+            for _i in 0..3{
+                self.food.push(Food::new());
+            }
+        }
         Ok(())
     }
 
