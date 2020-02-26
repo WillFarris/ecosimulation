@@ -108,41 +108,30 @@ pub mod critters {
             self.direction.y = angle.sin();
         }
 
-        /*
-        //based on seek_food
-        //has some 162 style debugging print statements.  need to clean up
-        pub fn mate_prey(&mut self, population: &Vec<Prey>, offspring: &mut Vec<Prey>) {
-            if self.wants_mate {
-                let mut partner = None;
-                let mut nearest_distance: f32 = std::f32::MAX;
-                //let pop = population.clone();
-                for p in population {
-                    println!("in the for loop!");
-                    let current_distance = distance(&self.position, &p.position);// - p.size;
-                    if (current_distance < nearest_distance) && (current_distance != 0.0) {
-                        println!("found a mate!");
-                        partner = Some(p);
-                        nearest_distance = current_distance;
-                    }
-                }
-                println!("{:?}", partner);
-                if partner != None { //need to fix: never enters
-                    self.seek_mate(&partner.unwrap(), offspring);
-                }
-            }
-        }*/
     }
 
     pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
+        let mut rng = thread_rng();
+        let mut my_size = a.size;
+        if a.size > b.size {my_size = rng.gen_range(b.size, a.size);}
+        else if b.size < a.size{ my_size = rng.gen_range(a.size, b.size);}
+
+        let mut my_speed = b.speed;
+        if a.speed > b.speed {my_speed = rng.gen_range(b.speed, a.speed);}
+        else if b.speed < a.speed{ my_speed = rng.gen_range(a.speed, b.speed);}
+
+        let mut my_sight = a.eyesight;
+        if a.eyesight > b.eyesight {my_sight = rng.gen_range(b.eyesight, a.eyesight);}
+        else if b.eyesight < a.eyesight{ my_sight = rng.gen_range(a.eyesight, b.eyesight);}
         Prey {
             position: a.position,
             color: Color::from_rgb(0, 0, 255),
             direction: Point2 { x: 1.0, y: 0.0 },
-            size: a.size,
-            speed: b.speed,
-            eyesight: 20.0,
-            max_hunger: 500.0,
-            hunger: 500.0,
+            size: my_size,
+            speed: my_speed,
+            eyesight: my_sight,
+            max_hunger: my_size * 100 as f32,
+            hunger: MAX_HUNGER,
             is_dead: false,
             wants_mate: false,
         }
