@@ -69,6 +69,12 @@ pub mod critters {
             } else {
                 self.is_dead = true;
             }
+            //pink if horny (can change back, mostly to test timer)
+            if self.wants_mate {
+                self.color = Color::from_rgb(247, 106, 210);
+            } else {
+                self.color = Color::from_rgb(200, 50, 90);
+            }
         }
 
         pub fn seek_food(&mut self, food_vec: &mut Vec<Food>) {
@@ -107,22 +113,33 @@ pub mod critters {
             self.direction.x = angle.cos();
             self.direction.y = angle.sin();
         }
-
     }
 
     pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
         let mut rng = thread_rng();
         let mut my_size = a.size;
-        if a.size > b.size {my_size = rng.gen_range(b.size, a.size);}
-        else if b.size < a.size{ my_size = rng.gen_range(a.size, b.size);}
+        if a.size > b.size {
+            my_size = rng.gen_range(b.size * 0.75, a.size * 1.25);
+        } else if b.size < a.size {
+            my_size = rng.gen_range(a.size * 0.75, b.size * 1.25);
+        }
 
         let mut my_speed = b.speed;
-        if a.speed > b.speed {my_speed = rng.gen_range(b.speed, a.speed);}
-        else if b.speed < a.speed{ my_speed = rng.gen_range(a.speed, b.speed);}
+        if a.speed > b.speed {
+            my_speed = rng.gen_range(b.speed * 0.75, a.speed * 1.25);
+        } else if b.speed < a.speed {
+            my_speed = rng.gen_range(a.speed * 0.75, b.speed * 1.25);
+        }
+        if (my_speed * 10.0) as i32 % 6 == 0 {
+            my_speed *= 10.0;
+        } //turbocritter
 
         let mut my_sight = a.eyesight;
-        if a.eyesight > b.eyesight {my_sight = rng.gen_range(b.eyesight, a.eyesight);}
-        else if b.eyesight < a.eyesight{ my_sight = rng.gen_range(a.eyesight, b.eyesight);}
+        if a.eyesight > b.eyesight {
+            my_sight = rng.gen_range(b.eyesight * 0.75, a.eyesight * 1.25);
+        } else if b.eyesight < a.eyesight {
+            my_sight = rng.gen_range(a.eyesight * 0.75, b.eyesight * 1.25);
+        }
         Prey {
             position: a.position,
             color: Color::from_rgb(0, 0, 255),
@@ -133,7 +150,7 @@ pub mod critters {
             max_hunger: my_size * 100 as f32,
             hunger: MAX_HUNGER,
             is_dead: false,
-            wants_mate: false,
+            wants_mate: true,
         }
     }
 

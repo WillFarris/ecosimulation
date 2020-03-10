@@ -2,23 +2,27 @@ use ggez::event;
 use ggez::event::EventHandler;
 use ggez::graphics;
 use ggez::graphics::{clear, draw, present, Color, DrawParam, Mesh, Rect};
+use ggez::timer;
 use ggez::Context;
 use ggez::ContextBuilder;
 use ggez::GameResult;
+use std::time::Duration;
 mod critters;
 mod math;
-use crate::math::math::{distance, anglebetween};
+use crate::math::math::{anglebetween, distance};
 use critters::critters::*;
 
 struct GameState {
     population: Vec<Prey>,
     food: Vec<Food>,
+    dt: Duration,
 }
 
 impl GameState {
     pub fn new(_ctx: &mut Context) -> Self {
         let mut population = Vec::new();
         let mut food = Vec::new();
+        let dt = Duration::new(0, 0);
         for _i in 0..10 {
             population.push(Prey::new());
         }
@@ -28,22 +32,27 @@ impl GameState {
         GameState {
             population,
             food,
+            dt,
         }
     }
 }
 
 impl EventHandler for GameState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         for i in 0..self.population.len() {
             for j in 0..self.population.len() {
                 if i != j && self.population[i].wants_mate && self.population[j].wants_mate {
                     let dist = distance(&self.population[i].position, &self.population[j].position);
                     if dist < self.population[i].size + self.population[j].size {
-                        self.population.push(mate_prey(&self.population[i], &self.population[j]));
+                        self.population
+                            .push(mate_prey(&self.population[i], &self.population[j]));
                         self.population[i].wants_mate = false;
                         self.population[j].wants_mate = false;
                     } else if dist < self.population[i].eyesight + self.population[j].eyesight {
-                        let to_j = anglebetween(&self.population[i].position, &self.population[j].position);
+                        let to_j = anglebetween(
+                            &self.population[i].position,
+                            &self.population[j].position,
+                        );
                         self.population[i].look_at(to_j);
                         self.population[j].look_at(to_j - 3.141592);
                     }
@@ -51,15 +60,27 @@ impl EventHandler for GameState {
             }
             self.population[i].seek_food(&mut self.food);
             self.population[i].update();
+            //mating season
+            if self.dt.as_secs() == 5 {
+                self.population[i].wants_mate = true;
+            }
         }
         self.population.retain(|x| !x.is_dead);
         self.food.retain(|x| !x.consumed);
-
-        if self.food.len() < 20{
-            for _i in 0..3{
+        /*
+        //mating season
+        if self.dt.as_secs() == 5{
+            for k in 0..self.population.len() {
+                self.population[k].wants_mate = true;
+            }
+        }
+        */
+        if self.food.len() < 20 {
+            for _i in 0..3 {
                 self.food.push(Food::new());
             }
         }
+        self.dt = timer::delta(ctx);
         Ok(())
     }
 
