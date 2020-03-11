@@ -72,8 +72,8 @@ impl EventHandler for GameState {
             let j: u32 = rng.gen_range(8.0, 10.0) as u32;
             let cur_time = Instant::now();
             self.dt = cur_time.duration_since(self.start_time);
-            let t = self.dt.as_secs();
-            if t % 5 == 1 && i as u32 == j {
+            let t = self.dt.as_millis() as u32;
+            if t % 5000 == 1 {
                 self.population[i].wants_mate = true; //works, but creates clusters of horny animals that mate really quickly and break the game
             }
             

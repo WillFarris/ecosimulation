@@ -6,7 +6,6 @@ pub mod critters {
 
     pub const MAX_HUNGER: f32 = 500.0;
 
-    #[derive(Copy, Clone, Debug, PartialEq)]
     pub struct Prey {
         // Non-genetic traits, mostly for drawing and graphics
         pub position: Point2<f32>,
