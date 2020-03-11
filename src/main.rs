@@ -2,13 +2,11 @@ use ggez::event;
 use ggez::event::EventHandler;
 use ggez::graphics;
 use ggez::graphics::{clear, draw, present, Color, DrawParam, Mesh, Rect};
-use ggez::timer;
 use ggez::Context;
 use ggez::ContextBuilder;
 use ggez::GameResult;
 use std::time::Duration;
 use std::time::Instant;
-//use timer;
 mod critters;
 mod math;
 use crate::math::math::{anglebetween, distance};
@@ -103,7 +101,7 @@ impl EventHandler for GameState {
                 ctx,
                 graphics::DrawMode::fill(),
                 f.position,
-                f.size,
+                f.cur_size,
                 0.1,
                 f.color,
             )?;

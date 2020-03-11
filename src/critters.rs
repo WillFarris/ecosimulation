@@ -158,6 +158,7 @@ pub mod critters {
     pub struct Food {
         pub position: Point2<f32>,
         pub size: f32,
+        pub cur_size: f32,
         pub color: Color,
 
         pub sustenance: f32,
@@ -168,13 +169,14 @@ pub mod critters {
     impl Food {
         pub(crate) fn new() -> Self {
             let mut rng = thread_rng();
-            let size = rng.gen_range(5.0, 15.0);
+            let size = rng.gen_range(5.0, 20.0);
             Self {
                 position: Point2 {
                     x: rng.gen_range(0.0, 800.0),
                     y: rng.gen_range(0.0, 600.0),
                 },
                 size: size,
+                cur_size: size,
                 color: Color::from_rgb(40, 90, 30),
                 sustenance: size * 2.0,
                 consumed: false,
@@ -185,13 +187,13 @@ pub mod critters {
             if self.consumed {
                 //self.color = Color::from_rgb(252, 186, 3);
                 self.color = Color::from_rgb(120, 200, 110);
-                self.size = 2.0;
+                self.cur_size = 2.0;
             }
         }
 
         pub fn grow(&mut self) {
-            if !self.consumed && self.size < 15.0 {
-                self.size += 2.0;
+            if !self.consumed && self.cur_size < self.size {
+                self.cur_size += 2.0;
             }
             if self.consumed {
                 self.consumed = false;
