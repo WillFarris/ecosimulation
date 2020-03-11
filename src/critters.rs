@@ -68,7 +68,7 @@ pub mod critters {
             } else {
                 self.is_dead = true;
             }
-            //pink if horny (can change back, mostly to test timer)
+            //pink if horny 
             if self.wants_mate {
                 self.color = Color::from_rgb(247, 106, 210);
             } else {
@@ -184,7 +184,7 @@ pub mod critters {
 
         pub fn update(&mut self) {
             if self.consumed {
-                //self.color = Color::from_rgb(252, 186, 3);
+                //self.color = Color::from_rgb(252, 186, 3);  //turn yellow when eaten for testing
                 self.color = Color::from_rgb(120, 200, 110);
                 self.cur_size = 2.0;
             }
