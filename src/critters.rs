@@ -84,10 +84,12 @@ pub mod critters {
             let mut nearest_food = None;
             let mut nearest_distance: f32 = std::f32::INFINITY;
             for f in food_vec {
-                let current_distance = distance(&self.position, &f.position) - f.size;
-                if current_distance < nearest_distance {
-                    nearest_food = Some(f);
-                    nearest_distance = current_distance;
+                if !f.consumed {
+                    let current_distance = distance(&self.position, &f.position) - f.size;
+                    if current_distance < nearest_distance {
+                        nearest_food = Some(f);
+                        nearest_distance = current_distance;
+                    }
                 }
             }
 
@@ -176,6 +178,24 @@ pub mod critters {
                 color: Color::from_rgb(40, 90, 30),
                 sustenance: size * 2.0,
                 consumed: false,
+            }
+        }
+
+        pub fn update(&mut self) {
+            if self.consumed {
+                //self.color = Color::from_rgb(252, 186, 3);
+                self.color = Color::from_rgb(120, 200, 110);
+                self.size = 2.0;
+            }
+        }
+
+        pub fn grow(&mut self) {
+            if !self.consumed && self.size < 15.0 {
+                self.size += 2.0;
+            }
+            if self.consumed {
+                self.consumed = false;
+                self.color = Color::from_rgb(40, 90, 30);
             }
         }
     }

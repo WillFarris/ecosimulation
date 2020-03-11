@@ -8,7 +8,6 @@ use ggez::ContextBuilder;
 use ggez::GameResult;
 use std::time::Duration;
 use std::time::Instant;
-use rand::{thread_rng, Rng};
 //use timer;
 mod critters;
 mod math;
@@ -66,26 +65,33 @@ impl EventHandler for GameState {
             }
             self.population[i].seek_food(&mut self.food);
             self.population[i].update();
-            
+
             //mating season
-            let mut rng = thread_rng();
-            let j: u32 = rng.gen_range(8.0, 10.0) as u32;
+            let cur_time = Instant::now();
+            self.dt = cur_time.duration_since(self.start_time);
+            let tmate = self.dt.as_millis() as u32;
+            if tmate % 4000 == 1 {
+                self.population[i].wants_mate = true;
+            }
+        }
+        self.population.retain(|x| !x.is_dead);
+        //self.food.retain(|x| !x.consumed);
+
+        for j in 0..self.food.len() {
             let cur_time = Instant::now();
             self.dt = cur_time.duration_since(self.start_time);
             let t = self.dt.as_millis() as u32;
-            if t % 5000 == 1 {
-                self.population[i].wants_mate = true; //works, but creates clusters of horny animals that mate really quickly and break the game
+            self.food[j].update();
+            if t % 200 == 1 {
+                self.food[j].grow();
             }
-            
         }
-        self.population.retain(|x| !x.is_dead);
-        self.food.retain(|x| !x.consumed);
-
-        if self.food.len() < 20 {
+        /*if self.food.len() < 20 {
             for _i in 0..3 {
                 self.food.push(Food::new());
             }
         }
+        */
         Ok(())
     }
 
