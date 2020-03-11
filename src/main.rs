@@ -8,6 +8,8 @@ use ggez::ContextBuilder;
 use ggez::GameResult;
 use std::time::Duration;
 use std::time::Instant;
+use rand::{thread_rng, Rng};
+//use timer;
 mod critters;
 mod math;
 use crate::math::math::{anglebetween, distance};
@@ -64,23 +66,26 @@ impl EventHandler for GameState {
             }
             self.population[i].seek_food(&mut self.food);
             self.population[i].update();
+            
             //mating season
+            let mut rng = thread_rng();
+            let j: u32 = rng.gen_range(8.0, 10.0) as u32;
             let cur_time = Instant::now();
             self.dt = cur_time.duration_since(self.start_time);
             let t = self.dt.as_secs();
-            if t % 5 == 0 {
-                self.population[i].wants_mate = true;
+            if t % 5 == 1 && i as u32 == j {
+                self.population[i].wants_mate = true; //works, but creates clusters of horny animals that mate really quickly and break the game
             }
+            
         }
         self.population.retain(|x| !x.is_dead);
         self.food.retain(|x| !x.consumed);
-       
+
         if self.food.len() < 20 {
             for _i in 0..3 {
                 self.food.push(Food::new());
             }
         }
-
         Ok(())
     }
 
