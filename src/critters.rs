@@ -14,7 +14,7 @@ pub mod critters {
 
         // Genetic traits
         pub size: f32,     // larger creatures can go longer without food
-        speed: f32,        // faster creatures consume energy more quickly
+        pub speed: f32,    // faster creatures consume energy more quickly
         pub eyesight: f32, // creatures with better eyesight can sense food further away
 
         pub max_hunger: f32, // depends on size
@@ -22,7 +22,7 @@ pub mod critters {
         // "Lifetime" traits
         pub hunger: f32, //decreases with movement, creature dies if it starves to death
         pub is_dead: bool, //dead flag, all dead creatures are removed each update() tick
-        pub wants_mate: bool, //horny flag, signals whether or not the critter wants to mate
+        pub wants_mate: bool, //signals whether or not the critter wants to mate
     }
 
     impl Prey {
@@ -55,6 +55,7 @@ pub mod critters {
 
         pub fn update(&mut self) {
             if self.hunger > 0.0 {
+
                 if self.position.x + self.size > 800.0 || self.position.x - self.size < 0.0 {
                     self.direction.x *= -1.0;
                 }

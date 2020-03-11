@@ -1,12 +1,13 @@
 use ggez::event;
 use ggez::event::EventHandler;
 use ggez::graphics;
-use ggez::graphics::{clear, draw, present, Color, DrawParam, Mesh, Rect};
+use ggez::graphics::{clear, draw, present, Color, DrawParam, Mesh, Rect, Text, TextFragment, Scale};
 use ggez::Context;
 use ggez::ContextBuilder;
 use ggez::GameResult;
 use std::time::Duration;
 use std::time::Instant;
+//use timer;
 mod critters;
 mod math;
 use crate::math::math::{anglebetween, distance};
@@ -73,7 +74,6 @@ impl EventHandler for GameState {
             }
         }
         self.population.retain(|x| !x.is_dead);
-        //self.food.retain(|x| !x.consumed);
 
         for j in 0..self.food.len() {
             let cur_time = Instant::now();
@@ -84,12 +84,6 @@ impl EventHandler for GameState {
                 self.food[j].grow();
             }
         }
-        /*if self.food.len() < 20 {
-            for _i in 0..3 {
-                self.food.push(Food::new());
-            }
-        }
-        */
         Ok(())
     }
 
@@ -152,6 +146,81 @@ impl EventHandler for GameState {
             draw(ctx, &hunger_bg, DrawParam::default())?;
             draw(ctx, &hunger_bar, DrawParam::default())?;
         }
+
+
+        // Oof this is not pretty but it needs to be working for the demo in like a few hours
+        let ui_bg = Mesh::new_rectangle(
+            ctx,
+            graphics::DrawMode::fill(),
+            Rect {
+                x: 15.0,
+                y: 15.0,
+                w: 200.0,
+                h: 70.0,
+            },
+            Color::new(0.4, 0.4, 0.4, 0.5),
+        )?;
+        draw(ctx, &ui_bg, DrawParam::default())?;
+
+        let mut height = 0.0;
+
+        let mut avg_size: f32 = 0.0;
+        for i in 0..self.population.len() {
+            avg_size += self.population[i].size;
+        }
+        avg_size /= self.population.len() as f32;
+        let mut avg_size_string = avg_size.to_string();
+        avg_size_string.truncate(4);
+        let size_text = Text::new(TextFragment {
+            text: "Average Size:        ".to_owned() + avg_size_string.as_str(),
+            color: Some(Color::new(1.0, 1.0, 1.0, 1.0)),
+            font: Some(graphics::Font::default()),
+            scale: Some(Scale::uniform(18.0)),
+            ..Default::default()
+        });
+        graphics::queue_text(ctx, &size_text, ggez::mint::Point2{x: 20.0, y: 20.0}, None);
+        height += 20.0;
+
+        let mut avg_speed: f32 = 0.0;
+        for i in 0..self.population.len() {
+            avg_speed += self.population[i].speed;
+        }
+        avg_speed /= self.population.len() as f32;
+        let mut avg_speed_str = avg_speed.to_string();
+        avg_speed_str.truncate(4);
+        let speed_text = Text::new(TextFragment {
+            text: "Average speed:     ".to_owned() + avg_speed_str.as_str(),
+            color: Some(Color::new(1.0, 1.0, 1.0, 1.0)),
+            font: Some(graphics::Font::default()),
+            scale: Some(Scale::uniform(18.0)),
+            ..Default::default()
+        });
+        graphics::queue_text(ctx, &speed_text, ggez::mint::Point2{x: 20.0, y: 20.0 + height}, None);
+        height += 20.0;
+
+        let mut avg_eyesight: f32 = 0.0;
+        for i in 0..self.population.len() {
+            avg_eyesight += self.population[i].eyesight;
+        }
+        avg_eyesight /= self.population.len() as f32;
+        let mut avg_eyesight_str = avg_eyesight.to_string();
+        avg_eyesight_str.truncate(4);
+        let speed_text = Text::new(TextFragment {
+            text: ("Average eyesight: ".to_owned() + avg_eyesight_str.as_str()),
+            color: Some(Color::new(1.0, 1.0, 1.0, 1.0)),
+            font: Some(graphics::Font::default()),
+            scale: Some(Scale::uniform(18.0)),
+            ..Default::default()
+        });
+        graphics::queue_text(ctx, &speed_text, ggez::mint::Point2{x: 20.0, y: 20.0 + height}, None);
+
+
+        graphics::draw_queued_text(
+            ctx,
+            DrawParam::default(),
+            None,
+            graphics::FilterMode::Linear,
+        )?;
 
         present(ctx)?;
         Ok(())
