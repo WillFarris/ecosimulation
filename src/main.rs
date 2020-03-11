@@ -7,6 +7,7 @@ use ggez::Context;
 use ggez::ContextBuilder;
 use ggez::GameResult;
 use std::time::Duration;
+use std::time::Instant;
 mod critters;
 mod math;
 use crate::math::math::{anglebetween, distance};
@@ -16,12 +17,14 @@ struct GameState {
     population: Vec<Prey>,
     food: Vec<Food>,
     dt: Duration,
+    start_time: Instant,
 }
 
 impl GameState {
     pub fn new(_ctx: &mut Context) -> Self {
         let mut population = Vec::new();
         let mut food = Vec::new();
+        let start_time = Instant::now();
         let dt = Duration::new(0, 0);
         for _i in 0..10 {
             population.push(Prey::new());
@@ -33,12 +36,13 @@ impl GameState {
             population,
             food,
             dt,
+            start_time,
         }
     }
 }
 
 impl EventHandler for GameState {
-    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
         for i in 0..self.population.len() {
             for j in 0..self.population.len() {
                 if i != j && self.population[i].wants_mate && self.population[j].wants_mate {
@@ -61,26 +65,22 @@ impl EventHandler for GameState {
             self.population[i].seek_food(&mut self.food);
             self.population[i].update();
             //mating season
-            if self.dt.as_secs() == 5 {
+            let cur_time = Instant::now();
+            self.dt = cur_time.duration_since(self.start_time);
+            let t = self.dt.as_secs();
+            if t % 5 == 0 {
                 self.population[i].wants_mate = true;
             }
         }
         self.population.retain(|x| !x.is_dead);
         self.food.retain(|x| !x.consumed);
-        /*
-        //mating season
-        if self.dt.as_secs() == 5{
-            for k in 0..self.population.len() {
-                self.population[k].wants_mate = true;
-            }
-        }
-        */
+       
         if self.food.len() < 20 {
             for _i in 0..3 {
                 self.food.push(Food::new());
             }
         }
-        self.dt = timer::delta(ctx);
+
         Ok(())
     }
 
