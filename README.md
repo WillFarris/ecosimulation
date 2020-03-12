@@ -22,6 +22,13 @@ git clone https://github.com/WillFarris/ecosimulation
 cd ecosimulation
 cargo run
 ```
+## Testing
+We didn't see a good way to do formal testing for this project.  Instead, elements were tested as they were implemented by running the program and adding visual representations of values and events.  For example, to test whether plants were regrowing, we had them change color when consumed.
+
+## What worked & what could be improved
+This program basically works as expected.  Due to time contraints, we didn't implement all of the features that we wanted to, but all of the core functionality that we expected to finish are done.  We purposely planned to add more features than time allowed, and those features provide ideas for what to add next.  This is a project that we are both excited to work on in the future as a side project.
+
+Some improvements/additions that we hope to add are predators that eat the prey critters, more detailed animation, and flocking algorithms to reduce random movement.
 
 ## Other work on this topic
 
