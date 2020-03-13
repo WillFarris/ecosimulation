@@ -15,15 +15,18 @@ Food sources have a set location and maximum size.  The available energy in each
 
 ## How to build and run the project
 
-Compiling and running is straightforward and can be done via cargo.
+Compiling and running is straightforward and can be done via `cargo run`. All libraries should be downloaded automatically.
+Due to issues with ggez itself, this project will not run under Wayland. Passing the environment variable `WINIT_UNIX_BACKEND=x11` before running the program fixes this issue, i.e.
+`WINIT_UNIX_BACKEND=x11; cargo run`
 
+To explicitly download and run the latest version of the project from GitHub:
 ```
 git clone https://github.com/WillFarris/ecosimulation
 cd ecosimulation
 cargo run
 ```
 ## Testing
-We didn't see a good way to do formal testing for this project.  Instead, elements were tested as they were implemented by running the program and adding visual representations of values and events.  For example, to test whether plants were regrowing, we had them change color when consumed.
+Testing this project was difficult due to the  
 
 ## What worked & what could be improved
 This program basically works as expected.  Due to time contraints, we didn't implement all of the features that we wanted to, but all of the core functionality that we expected to finish are done.  We purposely planned to add more features than time allowed, and those features provide ideas for what to add next.  This is a project that we are both excited to work on in the future as a side project.

@@ -1,4 +1,4 @@
-pub mod critters {
+//pub mod critters {
     use crate::math::math::{anglebetween, distance};
     use ggez::graphics::Color;
     use ggez::mint::Point2;
@@ -28,7 +28,7 @@ pub mod critters {
     impl Prey {
         pub fn new() -> Self {
             let mut rng = thread_rng();
-            let angle: f32 = rng.gen_range(0.0, 6.28318530718);
+            let angle: f32 = rng.gen_range(0.0, std::f32::consts::PI);
             let size: f32 = rng.gen_range(5.0, 10.0);
 
             Prey {
@@ -43,7 +43,7 @@ pub mod critters {
                 color: Color::from_rgb(200, 50, 90),
 
                 speed: rng.gen_range(0.1, 0.5),
-                size: size,
+                size,
                 max_hunger: size * 100.0,
                 eyesight: rng.gen_range(size + 10.0, size + 50.0),
 
@@ -86,7 +86,7 @@ pub mod critters {
             let mut nearest_distance: f32 = std::f32::INFINITY;
             for f in food_vec {
                 if !f.consumed {
-                    let current_distance = distance(&self.position, &f.position) - f.size;
+                    let current_distance = distance(self.position, f.position) - f.size;
                     if current_distance < nearest_distance {
                         nearest_food = Some(f);
                         nearest_distance = current_distance;
@@ -97,7 +97,7 @@ pub mod critters {
             let target_food = nearest_food.unwrap();
 
             if nearest_distance < self.eyesight {
-                let angle = anglebetween(&self.position, &target_food.position);
+                let angle = anglebetween(self.position, target_food.position);
                 self.direction.x = angle.cos();
                 self.direction.y = angle.sin();
             }
@@ -119,29 +119,27 @@ pub mod critters {
 
     pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
         let mut rng = thread_rng();
-        let mut my_size = a.size;
+        let my_size =
         if a.size > b.size {
-            my_size = rng.gen_range(b.size * 0.75, a.size * 1.25);
-        } else if b.size < a.size {
-            my_size = rng.gen_range(a.size * 0.75, b.size * 1.25);
-        }
+            rng.gen_range(b.size * 0.75, a.size * 1.25)
+        } else {
+            rng.gen_range(a.size * 0.75, b.size * 1.25)
+        };
 
-        let mut my_speed = b.speed;
+        let my_speed =
         if a.speed > b.speed {
-            my_speed = rng.gen_range(b.speed * 0.75, a.speed * 1.25);
-        } else if b.speed < a.speed {
-            my_speed = rng.gen_range(a.speed * 0.75, b.speed * 1.25);
-        }
-        if (my_speed * 10.0) as i32 % 6 == 0 {
-            my_speed *= 10.0;
-        } //turbocritter
+            rng.gen_range(b.speed * 0.75, a.speed * 1.25)
+        } else {
+            rng.gen_range(a.speed * 0.75, b.speed * 1.25)
+        };
 
-        let mut my_sight = a.eyesight;
+
+        let my_sight =
         if a.eyesight > b.eyesight {
-            my_sight = rng.gen_range(b.eyesight * 0.75, a.eyesight * 1.25);
-        } else if b.eyesight < a.eyesight {
-            my_sight = rng.gen_range(a.eyesight * 0.75, b.eyesight * 1.25);
-        }
+            rng.gen_range(b.eyesight * 0.75, a.eyesight * 1.25)
+        } else {
+            rng.gen_range(a.eyesight * 0.75, b.eyesight * 1.25)
+        };
         Prey {
             position: a.position,
             color: Color::from_rgb(0, 0, 255),
@@ -149,7 +147,7 @@ pub mod critters {
             size: my_size,
             speed: my_speed,
             eyesight: my_sight,
-            max_hunger: my_size * 100 as f32,
+            max_hunger: my_size * 100.0,
             hunger: MAX_HUNGER,
             is_dead: false,
             wants_mate: true,
@@ -175,7 +173,7 @@ pub mod critters {
                     x: rng.gen_range(0.0, 800.0),
                     y: rng.gen_range(0.0, 600.0),
                 },
-                size: size,
+                size,
                 cur_size: size - size_diff,
                 color: Color::from_rgb(40, 90, 30),
                 sustenance: size * 2.0,
@@ -203,4 +201,4 @@ pub mod critters {
             }
         }
     }
-}
+//}

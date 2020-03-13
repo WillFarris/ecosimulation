@@ -7,11 +7,10 @@ use ggez::ContextBuilder;
 use ggez::GameResult;
 use std::time::Duration;
 use std::time::Instant;
-//use timer;
 mod critters;
 mod math;
 use crate::math::math::{anglebetween, distance};
-use critters::critters::*;
+//use critters::critters::*;
 
 struct GameState {
     population: Vec<Prey>,
@@ -46,7 +45,7 @@ impl EventHandler for GameState {
         for i in 0..self.population.len() {
             for j in 0..self.population.len() {
                 if i != j && self.population[i].wants_mate && self.population[j].wants_mate {
-                    let dist = distance(&self.population[i].position, &self.population[j].position);
+                    let dist = distance(self.population[i].position, self.population[j].position);
                     if dist < self.population[i].size + self.population[j].size {
                         self.population
                             .push(mate_prey(&self.population[i], &self.population[j]));
@@ -54,11 +53,11 @@ impl EventHandler for GameState {
                         self.population[j].wants_mate = false;
                     } else if dist < self.population[i].eyesight + self.population[j].eyesight {
                         let to_j = anglebetween(
-                            &self.population[i].position,
-                            &self.population[j].position,
+                            self.population[i].position,
+                            self.population[j].position,
                         );
                         self.population[i].look_at(to_j);
-                        self.population[j].look_at(to_j - 3.141592);
+                        self.population[j].look_at(to_j - std::f32::consts::PI);
                     }
                 }
             }
@@ -102,6 +101,8 @@ impl EventHandler for GameState {
             draw(ctx, &mesh, DrawParam::default())?;
         }
 
+        // This was kind of hacked together and in the future the meshes would be better generated in the Prey struct
+        // to improve performance
         for p in &self.population {
             let eyesight_mesh = Mesh::new_circle(
                 ctx,
@@ -176,7 +177,6 @@ impl EventHandler for GameState {
             color: Some(Color::new(1.0, 1.0, 1.0, 1.0)),
             font: Some(graphics::Font::default()),
             scale: Some(Scale::uniform(18.0)),
-            ..Default::default()
         });
         graphics::queue_text(ctx, &size_text, ggez::mint::Point2{x: 20.0, y: 20.0}, None);
         height += 20.0;
@@ -193,7 +193,6 @@ impl EventHandler for GameState {
             color: Some(Color::new(1.0, 1.0, 1.0, 1.0)),
             font: Some(graphics::Font::default()),
             scale: Some(Scale::uniform(18.0)),
-            ..Default::default()
         });
         graphics::queue_text(ctx, &speed_text, ggez::mint::Point2{x: 20.0, y: 20.0 + height}, None);
         height += 20.0;
@@ -210,7 +209,6 @@ impl EventHandler for GameState {
             color: Some(Color::new(1.0, 1.0, 1.0, 1.0)),
             font: Some(graphics::Font::default()),
             scale: Some(Scale::uniform(18.0)),
-            ..Default::default()
         });
         graphics::queue_text(ctx, &speed_text, ggez::mint::Point2{x: 20.0, y: 20.0 + height}, None);
 
