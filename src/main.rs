@@ -1,7 +1,9 @@
 use ggez::event;
 use ggez::event::EventHandler;
 use ggez::graphics;
-use ggez::graphics::{clear, draw, present, Color, DrawParam, Mesh, Rect, Text, TextFragment, Scale};
+use ggez::graphics::{
+    clear, draw, present, Color, DrawParam, Mesh, Rect, Scale, Text, TextFragment,
+};
 use ggez::Context;
 use ggez::ContextBuilder;
 use ggez::GameResult;
@@ -9,8 +11,8 @@ use std::time::Duration;
 use std::time::Instant;
 mod critters;
 mod math;
-use crate::math::math::{anglebetween, distance};
-//use critters::critters::*;
+use math::*;
+use critters::*;
 
 struct GameState {
     population: Vec<Prey>,
@@ -52,10 +54,8 @@ impl EventHandler for GameState {
                         self.population[i].wants_mate = false;
                         self.population[j].wants_mate = false;
                     } else if dist < self.population[i].eyesight + self.population[j].eyesight {
-                        let to_j = anglebetween(
-                            self.population[i].position,
-                            self.population[j].position,
-                        );
+                        let to_j =
+                            anglebetween(self.population[i].position, self.population[j].position);
                         self.population[i].look_at(to_j);
                         self.population[j].look_at(to_j - std::f32::consts::PI);
                     }
@@ -148,7 +148,6 @@ impl EventHandler for GameState {
             draw(ctx, &hunger_bar, DrawParam::default())?;
         }
 
-
         // Oof this is not pretty but it needs to be working for the demo in like a few hours
         let ui_bg = Mesh::new_rectangle(
             ctx,
@@ -178,7 +177,12 @@ impl EventHandler for GameState {
             font: Some(graphics::Font::default()),
             scale: Some(Scale::uniform(18.0)),
         });
-        graphics::queue_text(ctx, &size_text, ggez::mint::Point2{x: 20.0, y: 20.0}, None);
+        graphics::queue_text(
+            ctx,
+            &size_text,
+            ggez::mint::Point2 { x: 20.0, y: 20.0 },
+            None,
+        );
         height += 20.0;
 
         let mut avg_speed: f32 = 0.0;
@@ -194,7 +198,15 @@ impl EventHandler for GameState {
             font: Some(graphics::Font::default()),
             scale: Some(Scale::uniform(18.0)),
         });
-        graphics::queue_text(ctx, &speed_text, ggez::mint::Point2{x: 20.0, y: 20.0 + height}, None);
+        graphics::queue_text(
+            ctx,
+            &speed_text,
+            ggez::mint::Point2 {
+                x: 20.0,
+                y: 20.0 + height,
+            },
+            None,
+        );
         height += 20.0;
 
         let mut avg_eyesight: f32 = 0.0;
@@ -210,8 +222,15 @@ impl EventHandler for GameState {
             font: Some(graphics::Font::default()),
             scale: Some(Scale::uniform(18.0)),
         });
-        graphics::queue_text(ctx, &speed_text, ggez::mint::Point2{x: 20.0, y: 20.0 + height}, None);
-
+        graphics::queue_text(
+            ctx,
+            &speed_text,
+            ggez::mint::Point2 {
+                x: 20.0,
+                y: 20.0 + height,
+            },
+            None,
+        );
 
         graphics::draw_queued_text(
             ctx,

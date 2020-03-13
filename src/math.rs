@@ -1,4 +1,3 @@
-pub mod math {
     use ggez::mint::Point2;
 
     pub fn distance(p1: Point2<f32>, p2: Point2<f32>) -> f32 {
@@ -12,4 +11,3 @@ pub mod math {
         let dy = to.y - from.y;
         dy.atan2(dx)
     }
-}
