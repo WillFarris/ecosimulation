@@ -7,6 +7,7 @@ Maggie Haddon <mahadd29@pdx.edu>
 
 ## Project Description
 Demo at <https://youtu.be/eDj6maaKUwE>
+
 This project is an ecosystem simulation written in Rust. When the simulation starts, several critters and food sources populate the map (critters are in pink and red, food is in dark green). Critters move, eat, and mate.  Moving decreases energy, and eating increases it. If a critter runs out of energy completely, it dies. The goal of the project was to create a simple model of how a species interacts with its environment across generations. The average genetic traits of the population are displayed on the screen, so a user can observe how these traits change over time as the species evolves.
 
 Critters have three genetic traits that can be passed down from parent to child: speed, size, and eyesight.
