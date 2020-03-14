@@ -19,6 +19,13 @@ pub fn average_dir(a: Point2<f32>, b: Point2<f32>) -> Point2<f32> {
     }
 }
 
+pub fn reverse_dir(vec: Point2<f32>) -> Point2<f32> {
+    Point2 {
+        x: vec.x * -1.0,
+        y: vec.y * -1.0,
+    }
+}
+
 pub fn normalize(vec: Point2<f32>) -> Point2<f32> {
     let len = (vec.x * vec.x + vec.y * vec.y).sqrt();
     Point2 {

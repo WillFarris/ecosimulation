@@ -26,7 +26,7 @@ cd ecosimulation
 cargo run
 ```
 ## Testing
-Testing this project was difficult due to the  
+Testing with 
 
 ## What worked & what could be improved
 This program basically works as expected.  Due to time contraints, we didn't implement all of the features that we wanted to, but all of the core functionality that we expected to finish are done.  We purposely planned to add more features than time allowed, and those features provide ideas for what to add next.  This is a project that we are both excited to work on in the future as a side project.

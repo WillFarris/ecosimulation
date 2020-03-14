@@ -132,7 +132,7 @@ pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
         my_sight *= rng.gen_range(0.9, 1.1);
     }
 
-    let my_direction = normalize(average_dir(a.position, b.position));
+    let my_direction = reverse_dir(normalize(average_dir(a.position, b.position)));
 
     Prey {
         position: a.position,
@@ -177,7 +177,6 @@ impl Food {
 
     pub fn update(&mut self) {
         if self.consumed {
-            //self.color = Color::from_rgb(252, 186, 3);  //turn yellow when eaten for testing
             self.color = Color::from_rgb(120, 200, 110);
             self.cur_size = 2.0;
         }
