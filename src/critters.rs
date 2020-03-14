@@ -88,16 +88,18 @@ impl Prey {
                 if current_distance < nearest_distance {
                     nearest_food = Some(f);
                     nearest_distance = current_distance;
+                    println!("{}", current_distance);
                 }
             }
+        }
+        if nearest_food.is_none() {
+            return;
         }
 
         let target_food = nearest_food.unwrap();
 
         if nearest_distance < self.eyesight {
-            let angle = anglebetween(self.position, target_food.position);
-            self.direction.x = angle.cos();
-            self.direction.y = angle.sin();
+            self.direction = point_to(self.position, target_food.position);
         }
 
         if nearest_distance < self.size {
@@ -109,9 +111,8 @@ impl Prey {
         }
     }
 
-    pub fn look_at(&mut self, angle: f32) {
-        self.direction.x = angle.cos();
-        self.direction.y = angle.sin();
+    pub fn look_at(&mut self, towards: Point2<f32>) {
+        self.direction = point_to(self.position, towards);
     }
 }
 
@@ -132,7 +133,7 @@ pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
         my_sight *= rng.gen_range(0.9, 1.1);
     }
 
-    let my_direction = reverse_dir(normalize(average_dir(a.position, b.position)));
+    let my_direction = scale_vec(-1.0, normalize(average_dir(a.position, b.position)));
 
     Prey {
         position: a.position,
@@ -141,7 +142,7 @@ pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
         size: my_size,
         speed: my_speed,
         eyesight: my_sight,
-        max_hunger: my_size * 100.0,
+        max_hunger: MAX_HUNGER,
         hunger: MAX_HUNGER,
         is_dead: false,
         wants_mate: false,

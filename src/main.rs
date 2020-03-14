@@ -54,13 +54,17 @@ impl EventHandler for GameState {
                         self.population[i].wants_mate = false;
                         self.population[j].wants_mate = false;
                     } else if dist < self.population[i].eyesight + self.population[j].eyesight {
-                        let to_j =
-                            anglebetween(self.population[i].position, self.population[j].position);
-                        self.population[i].look_at(to_j);
-                        self.population[j].look_at(to_j - std::f32::consts::PI);
+                        let i_pos = self.population[i].position;
+                        let j_pos = self.population[j].position;
+                        self.population[i].look_at(j_pos);
+                        self.population[j].look_at(i_pos);
                     }
                 }
             }
+
+            let mag = mag(self.population[i].direction);
+            assert!(mag > 0.9 && mag < 1.01);
+
             self.population[i].seek_food(&mut self.food);
             self.population[i].update();
 
