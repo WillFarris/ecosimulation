@@ -11,8 +11,8 @@ use std::time::Duration;
 use std::time::Instant;
 mod critters;
 mod math;
-use math::*;
 use critters::*;
+use math::*;
 
 struct GameState {
     population: Vec<Prey>,

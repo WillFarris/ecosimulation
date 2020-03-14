@@ -67,7 +67,7 @@ impl Prey {
         } else {
             self.is_dead = true;
         }
-        //pink if horny
+        // pink indicates this Prey is looking for a mate
         if self.wants_mate {
             self.color = Color::from_rgb(247, 106, 210);
         } else {
@@ -117,34 +117,34 @@ impl Prey {
 
 pub fn mate_prey(a: &Prey, b: &Prey) -> Prey {
     let mut rng = thread_rng();
-    let my_size = if a.size > b.size {
-        rng.gen_range(b.size * 0.75, a.size * 1.25)
-    } else {
-        rng.gen_range(a.size * 0.75, b.size * 1.25)
-    };
+    let mut my_size = if rng.gen_bool(0.5) {a.size} else {b.size};
+    let mut my_speed = if rng.gen_bool(0.5) {a.speed} else {b.speed};
+    let mut my_sight = if rng.gen_bool(0.5) {a.eyesight} else {b.eyesight};
 
-    let my_speed = if a.speed > b.speed {
-        rng.gen_range(b.speed * 0.75, a.speed * 1.25)
-    } else {
-        rng.gen_range(a.speed * 0.75, b.speed * 1.25)
-    };
+    // random change at 10% mutation for each gene
+    if rng.gen_ratio(1, 20) {
+        my_size *= rng.gen_range(0.9, 1.1);
+    }
+    if rng.gen_ratio(1, 20) {
+        my_speed *= rng.gen_range(0.9, 1.1);
+    }
+    if rng.gen_ratio(1, 20) {
+        my_sight *= rng.gen_range(0.9, 1.1);
+    }
 
-    let my_sight = if a.eyesight > b.eyesight {
-        rng.gen_range(b.eyesight * 0.75, a.eyesight * 1.25)
-    } else {
-        rng.gen_range(a.eyesight * 0.75, b.eyesight * 1.25)
-    };
+    let my_direction = normalize(average_dir(a.position, b.position));
+
     Prey {
         position: a.position,
         color: Color::from_rgb(0, 0, 255),
-        direction: Point2 { x: 1.0, y: 0.0 },
+        direction: my_direction,
         size: my_size,
         speed: my_speed,
         eyesight: my_sight,
         max_hunger: my_size * 100.0,
         hunger: MAX_HUNGER,
         is_dead: false,
-        wants_mate: true,
+        wants_mate: false,
     }
 }
 
