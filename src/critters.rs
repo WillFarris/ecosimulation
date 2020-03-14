@@ -84,7 +84,7 @@ impl Prey {
         let mut nearest_distance: f32 = std::f32::INFINITY;
         for f in food_vec {
             if !f.consumed {
-                let current_distance = distance(self.position, f.position) - f.size;
+                let current_distance = distance(self.position, f.position) - f.cur_size;
                 if current_distance < nearest_distance {
                     nearest_food = Some(f);
                     nearest_distance = current_distance;
