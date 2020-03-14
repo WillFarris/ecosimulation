@@ -1,5 +1,5 @@
 # ecosimulation
-An ecosystem simulation written in Rust for a term project
+An ecosystem simulation written in Rust for our CS410 term project
 
 ## Authors
 Will Farris(<wfarris@pdx.edu>), Maggie Haddon (<mahadd29@pdx.edu>)
