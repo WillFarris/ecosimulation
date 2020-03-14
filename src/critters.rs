@@ -88,7 +88,6 @@ impl Prey {
                 if current_distance < nearest_distance {
                     nearest_food = Some(f);
                     nearest_distance = current_distance;
-                    println!("{}", current_distance);
                 }
             }
         }
